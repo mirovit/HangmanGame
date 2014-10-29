@@ -19,8 +19,10 @@ int main()
     
     while( run )
     {
-        runGame(Game);
-        
+		try {
+			runGame(Game);
+        } catch(...){}
+		
         cout << "Play another game? (y/n): ";
         cin >> runAnotherGame;
         
