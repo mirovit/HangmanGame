@@ -1,12 +1,13 @@
 #include<iostream>
-#include <locale>
+#include<locale>
 #include<string>
 #include<algorithm>
-#include<map>
+#include<vector>
 #include<fstream>
 #include<cstdlib>
-#include <ctime>
+#include<ctime>
 #include "Hangman.h"
+#include "RuntimeExceptions.h"
 
 using namespace std;
 
@@ -17,9 +18,11 @@ using namespace std;
  */
 Hangman::Hangman(string fileName)
 {
-    fillDictionary(fileName);
-    
-    setAllowedChars();
+	words.reserve(110000);
+
+	fillDictionary(fileName);
+
+	setAllowedChars();
 
     attempts = 0;
     allowedAttempts = 5;
@@ -30,8 +33,14 @@ Hangman::Hangman(string fileName)
  */
 void Hangman::getRandomWord()
 {
+	if (words.size() == 0)
+	{
+		throw RuntimeException("Game was not loaded properly. Cannot continue.");
+	}
+
     srand(time(NULL));
-    int index = rand() % words.size() + 1;
+
+	int index = rand() % words.size() + 1;
     
     currentWord = words[index];
 };
@@ -59,7 +68,7 @@ string Hangman::wordPlaceholder()
 {
     string placehoder;
     
-    for(int i = 0; i < currentWord.length(); i++)
+    for(unsigned int i = 0; i < currentWord.length(); i++)
     {
         if( currentWord[i] >= 'a' && currentWord[i] <= 'z' )
         {
@@ -72,14 +81,6 @@ string Hangman::wordPlaceholder()
     userGuess = placehoder;
     
     return placehoder;
-};
-
-/**
- * How many words have been loaded.
- */
-int Hangman::count() const
-{
-    return words.size();
 };
 
 /**
@@ -127,7 +128,7 @@ bool Hangman::wordContainsChar(char input)
  */
 void Hangman::addGuess(char guess)
 {
-    for(int i = 0; i < currentWord.length(); i++)
+    for(unsigned int i = 0; i < currentWord.length(); i++)
     {
         if(currentWord[i] == guess)
         {
@@ -162,16 +163,16 @@ void Hangman::fillDictionary(string fileName)
 {
     ifstream file( fileName.c_str() );
     string word;
+
+	if (!file.good())
+		throw FileDoesnotExist("The dictionary could not be loaded. Please make sure that '" + fileName + "' exists.");
     
-    if( file.is_open() )
+	if( file.is_open() )
     {
-        int i = 0;
-        
         while(getline(file, word))
         {
             word = toLower(word);
-            words.insert( pair<int, string>(i, word) );
-            i++;
+			words.push_back(word);
         }
         
         file.close();

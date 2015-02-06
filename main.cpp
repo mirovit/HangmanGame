@@ -1,6 +1,7 @@
 #include<iostream>
 #include<string>
 #include "Hangman.h"
+#include "RuntimeExceptions.h"
 
 using namespace std;
 
@@ -8,32 +9,43 @@ void runGame(Hangman& Game);
 
 int main()
 {
-    Hangman Game("fruits.txt");
-    
-    Game.printTitle();
-    
-    Game.printRules();
+	try {
+		Hangman Game("dictionary.txt");
+		Game.printTitle();
 
-    char runAnotherGame;
-    bool run = true;
-    
-    while( run )
-    {
-		try {
-			runGame(Game);
-        } catch(...){}
-		
-        cout << "Play another game? (y/n): ";
-        cin >> runAnotherGame;
-        
-        if( runAnotherGame != 'y' && runAnotherGame != 'Y' )
-        {
-            run = false;
-        }
-        
-        cout << endl;
-    }
-    
+		Game.printRules();
+
+		char runAnotherGame;
+		bool run = true;
+
+		while (run)
+		{
+			try {
+				runGame(Game);
+			}
+			catch (RuntimeException &e)
+			{
+				cout << e;
+				return -1;
+			}
+
+			cout << "Play another game? (y/n): ";
+			cin >> runAnotherGame;
+
+			if (runAnotherGame != 'y' && runAnotherGame != 'Y')
+			{
+				run = false;
+			}
+
+			cout << endl;
+		}
+	}
+	catch (RuntimeException &e)
+	{
+		cout << e;
+		return -1;
+	}
+
     return 0;
 }
 
@@ -41,8 +53,8 @@ void runGame(Hangman& Game)
 {
     Game.restart();
     
-    Game.getRandomWord();
-    
+	Game.getRandomWord();
+	
     cout << Game.wordPlaceholder() << endl << endl;
     
     char guess;

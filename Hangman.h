@@ -4,6 +4,7 @@
 
 #include<iostream>
 #include<map>
+#include<vector>
 
 using namespace std;
 
@@ -14,7 +15,7 @@ class Hangman {
     void setAllowedChars();
     void fillDictionary(string fileName);
     
-    map<int, string> words;
+    vector<string> words;
     map<char, bool> letters;
     string currentWord;
     int attempts;
@@ -28,7 +29,6 @@ class Hangman {
     bool hasWon() const;
     bool isAllowedInput(char input);
     bool wordContainsChar(char input);
-    int count() const;
     void restart();
     void addGuess(char guess);
     void incrementAttempts();
